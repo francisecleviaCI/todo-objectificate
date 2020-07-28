@@ -2,7 +2,7 @@ const readline = require('readline');
 const fs = require('fs');
 
 
-const todos = [];
+let todos = [];//I don't think this is correct**
 const interface = readline.createInterface({input: process.stdin, output: process.stdout})
 const menu = `
 Your options are:
@@ -17,31 +17,36 @@ Your options are:
 
 const loadTodos = function() {
   todos.splice(0);
-  const file = fs.readFileSync('./todos.csv', 'utf8');
-  const rows = file.split('\n');
-  for (const rowString of rows) {
-    const todo = rowString.split(',')
-    todos.push(todo);
+  const file = fs.readFileSync(__dirname + '/../back-end/todos.json', 'utf8');
+  console.log(file)
+  const obj = JSON.parse(file);
+  
+  
+  const todo = obj.todos
+   
+  console.log(todo)
   }
-}
+
 
 const saveTodos = function() {
-  const rowStrings = [];
-  for (const todo of todos) {
-    rowStrings.push(todo[0] + ',' + todo[1]);
-  }
+//create a new object with a 'todos' property
+const newObject = {
+  todos: '',
+};
 
-  const newContents = rowStrings.join('\n');
-  fs.writeFileSync('./todos.csv', newContents);
+
+const newContents = JSON.stringify(obj, null, 2);
+
+fs.writeFileSync(__dirname + '/../back-end/todos.json', newContents);
 }
 
 const displayTodos = function(shouldPrintNumber) {
   console.log('\nHere are your current todos:\n')
   for (let i = 0; i < todos.length; i++) {
     const todo = todos[i];
-    const text = todo[0];
-    const isComplete = todo[1];
-    const priority = todo[2];
+    todo.text = todo[0];
+    todo.isComplete = todo[1];
+    todo.priority = todo[2];
     const num = i + 1;
     let listSymbol = '*';
     let mark = '✖';
@@ -49,11 +54,11 @@ const displayTodos = function(shouldPrintNumber) {
       listSymbol = num + '.';
     }
 
-    if (isComplete === 'complete') {
+    if (todo.isComplete === true) {
       mark = '✅';
     }
 
-    const todoLine = listSymbol + ' ' + text + ' - priority: ' + priority + ' - ' + mark;
+    const todoLine = listSymbol + ' ' + todo.text + ' - priority: ' + todo.priority + ' - ' + mark;
     // or, using interpolation:
     // const todoLine = `${listSymbol} ${todo.text} - priority: ${todo.priority} - ${mark}`
     console.log(todoLine);
@@ -78,8 +83,12 @@ const remove = function(num) {
 const complete = function(num) {
   [['thing1', 'complete'], ['thing2', 'uncomplete']]
   for (let i = 0; i < todos.length; i++) {
+    todo = todos[i];
+    todo.text = todo[0];
+    todo.isComplete = todo[1];
+    todo.priority = todo[2];
     if (i + 1 === Number(num)) {
-      todos[i][1] = 'complete';
+      todo.isComplete = true;
     }
   }
 
@@ -90,8 +99,12 @@ const complete = function(num) {
 
 const uncomplete = function(num) {
   for (let i = 0; i < todos.length; i++) {
+    const todo = todos[i];
+    todo.text = todo[0];
+    todo.isComplete = todo[1];
+    todo.priority = todo[2];
     if (i + 1 === Number(num)) {
-      todos[i][1] = 'uncomplete';
+      todo.isComplete = false;
     }
   }
 
