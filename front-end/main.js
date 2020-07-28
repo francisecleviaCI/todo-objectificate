@@ -18,24 +18,24 @@ Your options are:
 const loadTodos = function() {
   todos.splice(0);
   const file = fs.readFileSync(__dirname + '/../back-end/todos.json', 'utf8');
-  console.log(file)
+  // console.log(file)
   const obj = JSON.parse(file);
   
   
-  const todo = obj.todos
+  const todoArray = obj.todos
    
-  console.log(todo)
+  // console.log(todoArray)
   }
 
 
 const saveTodos = function() {
 //create a new object with a 'todos' property
 const newObject = {
-  todos: '',
+  todos: todos,
 };
 
 
-const newContents = JSON.stringify(obj, null, 2);
+const newContents = JSON.stringify(newObject, null, 2);
 
 fs.writeFileSync(__dirname + '/../back-end/todos.json', newContents);
 }
@@ -83,7 +83,7 @@ const remove = function(num) {
 const complete = function(num) {
   [['thing1', 'complete'], ['thing2', 'uncomplete']]
   for (let i = 0; i < todos.length; i++) {
-    todo = todos[i];
+    const todo = todos[i];
     todo.text = todo[0];
     todo.isComplete = todo[1];
     todo.priority = todo[2];
